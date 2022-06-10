@@ -6,7 +6,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens;
+use Laravel\Passport\HasApiTokens;
 
 class User extends Authenticatable
 {
@@ -21,6 +21,16 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+    ];
+
+    protected $enumerationType = [
+        'subscriber',
+        'staff',
+        'dispatch',
+        'adhoc',
+        'support',
+        'influencer',
+        'ambassador'
     ];
 
     /**
@@ -41,4 +51,14 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function addresses()
+    {
+        return $this->morphMany(Address::class, 'addressable');
+    }
+
+    public function roles()
+    {
+        return $this->morphToMany(Role::class, 'roleable');
+    }
 }
