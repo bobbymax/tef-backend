@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Address;
+use App\Models\Brand;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -55,6 +56,8 @@ class AddressController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
+            'owner' => 'required|string|in:user,brand',
+            'owner_id' => 'required|integer',
             'street_one' => 'required|string',
             'area' => 'required|string',
             'city' => 'required|string',
@@ -70,6 +73,16 @@ class AddressController extends Controller
             ], 500);
         }
 
+        $owner = $this->fetchOwner($request->owner, $request->owner_id);
+
+        if ($owner == null) {
+            return response()->json([
+                'data' => null,
+                'status' => 'error',
+                'message' => 'Something went wrong!!!'
+            ], 500);
+        }
+
         $address = new Address;
         $address->street_one = $request->street_one;
         $address->street_two = $request->street_two;
@@ -77,13 +90,24 @@ class AddressController extends Controller
         $address->city = $request->city;
         $address->zipcode = $request->zipcode;
         $address->state = $request->state;
-        auth()->user()->addresses()->save($address);
+
+        $owner->addresses()->save($address);
 
         return response()->json([
             'data' => $address,
             'status' => 'success',
             'message' => 'Address added successfully!!'
         ], 201);
+    }
+
+    protected function fetchOwner($owner, $id)
+    {
+        $entity = match ($owner) {
+            "brand" => Brand::find($id),
+            default => auth()->user(),
+        };
+
+        return $entity;
     }
 
     /**

@@ -3,9 +3,6 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-//Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-//    return $request->user();
-//});
 
 Route::group(['middleware' => ['cors', 'json.response']], function () {
     // User Authentication
@@ -14,6 +11,8 @@ Route::group(['middleware' => ['cors', 'json.response']], function () {
 
     // Access Control
     Route::apiResource('roles', 'RoleController');
+    Route::apiResource('modules', 'ModuleController');
+    Route::apiResource('categories', 'CategoryController');
     Route::get('permissions', 'PermissionController@index');
 });
 
