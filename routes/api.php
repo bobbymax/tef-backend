@@ -13,6 +13,11 @@ Route::group(['middleware' => ['cors', 'json.response']], function () {
     Route::apiResource('roles', 'RoleController');
     Route::apiResource('modules', 'ModuleController');
     Route::apiResource('categories', 'CategoryController');
+    Route::apiResource('classifications', 'ClassificationController');
+    Route::apiResource('brands', 'BrandController');
+    Route::apiResource('tags', 'TagController');
+    Route::apiResource('images', 'ImageController');
+    Route::apiResource('products', 'ProductController');
     Route::get('permissions', 'PermissionController@index');
 });
 
