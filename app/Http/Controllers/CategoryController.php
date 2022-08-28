@@ -28,7 +28,7 @@ class CategoryController extends Controller
                 'data' => [],
                 'status' => 'info',
                 'message' => 'No data found'
-            ], 204);
+            ], 200);
         }
 
         return response()->json([
@@ -166,7 +166,7 @@ class CategoryController extends Controller
         $category->update([
             'name' => $request->name,
             'label' => Str::slug($request->name),
-            'parentId' => $request->parntId,
+            'parentId' => $request->parentId,
             'description' => $request->description,
         ]);
 

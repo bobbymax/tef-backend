@@ -8,6 +8,7 @@ use App\Models\Image;
 use App\Models\Product;
 use App\Models\Tag;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 
@@ -66,9 +67,9 @@ class ProductController extends Controller
             'brand_id' => 'required|integer',
             'classification_id' => 'required|integer',
             'vip' => 'required|integer',
-            'tags' => 'required|array',
-            'categories' => 'required|array',
-            'images' => 'required|array'
+            'tags' => 'required',
+            'categories' => 'required',
+            'image' => 'required'
         ]);
 
         if ($validator->fails()) {
@@ -80,30 +81,36 @@ class ProductController extends Controller
         }
 
         $product = Product::create([
-            'brand_id' => $request->brand_id,
-            'classification_id' => $request->classification_id,
-            'title' => $request->title,
-            'label' => Str::slug($request->title),
-            'price' => $request->price,
-            'vip' => $request->vip,
-            'description' => $request->description,
+            'brand_id' => $request->input('brand_id'),
+            'classification_id' => $request->input('classification_id'),
+            'title' => $request->input('title'),
+            'label' => Str::slug($request->input('title')),
+            'price' => $request->input('price'),
+            'vip' => $request->input('vip'),
+            'description' => $request->input('description'),
         ]);
 
         if ($product) {
-            if ($request->has('images')) {
-                foreach($request->images as $pic) {
+            if ($request->hasFile('image')) {
+                $file = $request->file('image');
+
+                $path = $file->store('products', 's3');
+                $storage = Storage::disk('s3');
+                $storage->setVisibility($path, 'public');
+
+                if ($path) {
                     $image = new Image;
-                    $image->name = $pic['name'];
-                    $image->size = $pic['size'];
-                    $image->type = $pic['type'];
-                    $image->path = $pic['path'];
-                    $product->images()->save($image);
+                    $image->name = basename($path);
+                    $image->size = $file->getSize();
+                    $image->type = $file->getClientMimeType();
+                    $image->path = $storage->url($path);
+                    $product->image()->save($image);
                 }
             }
 
-            if ($request->has('categories')) {
-                foreach($request->categories as $cat) {
-                    $category = Category::find($cat);
+            if ($request->input('categories')) {
+                foreach(json_decode($request->input('categories')) as $cat) {
+                    $category = Category::find($cat->value);
 
                     if ($category && ! in_array($category->id, $product->categories->pluck('id')->toArray())) {
                         $product->categories()->save($category);
@@ -111,9 +118,9 @@ class ProductController extends Controller
                 }
             }
 
-            if ($request->has('tags')) {
-                foreach($request->tags as $t) {
-                    $tag = Tag::find($t);
+            if ($request->input('tags')) {
+                foreach(json_decode($request->input('tags')) as $t) {
+                    $tag = Tag::find($t->value);
 
                     if ($tag && ! in_array($tag->id, $product->tags->pluck('id')->toArray())) {
                         $product->tags()->save($tag);
@@ -251,7 +258,7 @@ class ProductController extends Controller
         }
 
         $old = $product;
-        $product->images()->delete();
+        $product->image()->delete();
         $product->categories()->detach();
         $product->tags()->detach();
         $product->delete();

@@ -13,10 +13,8 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('categoryables', function (Blueprint $table) {
-            $table->bigInteger('category_id')->unsigned();
-            $table->bigInteger('categoryable_id')->unsigned();
-            $table->string('categoryable_type');
+        Schema::table('users', function (Blueprint $table) {
+            $table->bigInteger('role_id')->default(0)->after('id');
         });
     }
 
@@ -27,6 +25,8 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('categoryables');
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropColumn('role_id');
+        });
     }
 };

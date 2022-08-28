@@ -14,6 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::create('tagables', function (Blueprint $table) {
+            $table->bigInteger('tag_id')->unsigned();
             $table->bigInteger('tagable_id')->unsigned();
             $table->string('tagable_type');
         });

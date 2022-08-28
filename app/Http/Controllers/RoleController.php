@@ -29,7 +29,7 @@ class RoleController extends Controller
         }
 
         return response()->json([
-            'data' => RoleResource::collection($roles),
+            'data' => $roles,
             'status' => 'success',
             'message' => 'Roles list'
         ], 200);
@@ -55,10 +55,10 @@ class RoleController extends Controller
             'name' => $request->name,
             'label' => Str::slug($request->name),
             'max_slots' => $request->max_slots,
-            'start_date' => Carbon::parse($request->start_date),
+            'start_date' => isset($request->start_date) ? Carbon::parse($request->start_date) : null,
             'expiry_date' => $request->expiry_date != null ? Carbon::parse($request->expiry_date) : null,
             'isSuper' => $request->isSuper,
-            'cannot_expire' => $request->cannot_expire
+            'cannot_expire' => $request->cannot_expire ?? 1
         ]);
 
         if ($request->has('permissions')) {
@@ -146,10 +146,7 @@ class RoleController extends Controller
             'name' => $request->name,
             'label' => Str::slug($request->name),
             'max_slots' => $request->max_slots,
-            'start_date' => Carbon::parse($request->start_date),
-            'expiry_date' => $request->expiry_date != null ? Carbon::parse($request->expiry_date) : null,
             'isSuper' => $request->isSuper,
-            'cannot_expire' => $request->cannot_expire
         ]);
 
         if ($request->has('permissions')) {

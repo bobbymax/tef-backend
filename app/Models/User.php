@@ -17,11 +17,7 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
-    protected $fillable = [
-        'name',
-        'email',
-        'password',
-    ];
+    protected $guarded = [''];
 
     protected $enumerationType = [
         'subscriber',
@@ -57,6 +53,11 @@ class User extends Authenticatable
         return $this->morphMany(Address::class, 'addressable');
     }
 
+    public function role()
+    {
+        return $this->belongsTo(Role::class, 'role_id');
+    }
+
     public function roles()
     {
         return $this->morphToMany(Role::class, 'roleable');
@@ -65,5 +66,15 @@ class User extends Authenticatable
     public function orders()
     {
         return $this->hasMany(Order::class);
+    }
+
+    public function attended()
+    {
+        return $this->hasMany(Order::class, 'handler_id');
+    }
+
+    public function attendedInternally()
+    {
+        return $this->hasMany(InternalOrder::class);
     }
 }

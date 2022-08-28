@@ -13,6 +13,6 @@ class Tag extends Model
 
     public function products()
     {
-        return $this->morphToMany(Product::class, 'tagable');
+        return $this->morphedByMany(Product::class, 'tagable');
     }
 }

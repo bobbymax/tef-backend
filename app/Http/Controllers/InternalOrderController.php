@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\InternalOrderResource;
 use App\Models\Cart;
 use App\Models\CartItem;
 use App\Models\InternalOrder;
@@ -32,7 +33,7 @@ class InternalOrderController extends Controller
         }
 
         return response()->json([
-            'data' => $orders,
+            'data' => InternalOrderResource::collection($orders),
             'status' => 'success',
             'message' => 'Orders List',
         ], 200);
@@ -61,7 +62,7 @@ class InternalOrderController extends Controller
             'trnxId' => 'required|string|unique:orders',
             'orderId' => 'required|string|unique:carts',
             'table_no' => 'required|string',
-            'total_amount' => 'required|integer',
+            'total_amount' => 'required',
             'amount_received' => 'required',
             'payment_method' => 'required|string|max:255|in:electronic,cash',
         ]);
@@ -106,13 +107,14 @@ class InternalOrderController extends Controller
             'mobile' => $request->mobile,
             'email' => $request->email,
             'amount_received' => $request->amount_received,
+            'total_amount' => $request->total_amount,
             'additional_info' => $request->additional_info,
             'payment_method' => $request->payment_method,
             'status' => 'processing'
         ]);
 
         return response()->json([
-            'data' => $order,
+            'data' => new InternalOrderResource($order),
             'status' => 'success',
             'message' => 'Order Has Been Placed Successfully!!'
         ], 200);
@@ -137,7 +139,7 @@ class InternalOrderController extends Controller
         }
 
         return response()->json([
-            'data' => $internalOrder,
+            'data' => new InternalOrderResource($internalOrder),
             'status' => 'success',
             'message' => 'Order Details'
         ], 200);
@@ -162,7 +164,7 @@ class InternalOrderController extends Controller
         }
 
         return response()->json([
-            'data' => $internalOrder,
+            'data' => new InternalOrderResource($internalOrder),
             'status' => 'success',
             'message' => 'Order Details'
         ], 200);
@@ -179,6 +181,7 @@ class InternalOrderController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'paid' => 'required',
+            'status' => 'required|string|in:fulfilled'
         ]);
 
         if ($validator->fails()) {
@@ -201,10 +204,12 @@ class InternalOrderController extends Controller
 
         $internalOrder->update([
             'paid' => $request->paid,
+            'status' => $request->status,
+            'closed' => $request->closed
         ]);
 
         return response()->json([
-            'data' => $internalOrder,
+            'data' => new InternalOrderResource($internalOrder),
             'status' => 'success',
             'message' => 'Order has been updated successfully!!'
         ], 200);

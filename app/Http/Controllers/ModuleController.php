@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Module;
+use App\Models\Role;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
@@ -23,7 +24,7 @@ class ModuleController extends Controller
                 'data' => [],
                 'status' => 'info',
                 'message' => 'No data found'
-            ], 204);
+            ], 200);
         }
 
         return response()->json([
@@ -78,7 +79,6 @@ class ModuleController extends Controller
             'icon' => $request->icon,
             'parentId' => $request->parentId,
             'generatePermissions' => $request->generatePermissions,
-            'isMenu' => $request->isMenu,
             'type' => $request->type
         ]);
 
@@ -99,7 +99,7 @@ class ModuleController extends Controller
             $currentRoles = $module->roles->pluck('id')->toArray();
 
             foreach($request->roles as $value) {
-                $r = Role::find($value);
+                $r = Role::find($value['value']);
 
                 if ($r && ! in_array($r->id, $currentRoles)) {
                     $module->roles()->save($r);
@@ -224,7 +224,6 @@ class ModuleController extends Controller
             'path' => $request->path,
             'icon' => $request->icon,
             'parentId' => $request->parentId,
-            'isMenu' => $request->isMenu,
             'type' => $request->type
         ]);
 

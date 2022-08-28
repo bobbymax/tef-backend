@@ -24,7 +24,6 @@ return new class extends Migration
             $table->longText('description')->nullable();
             $table->decimal('price', $precision=30, $scale=2)->default(0);
             $table->decimal('vip', $precision=30, $scale=2)->default(0);
-            $table->bigInteger('discount')->default(0);
             $table->boolean('inStock')->default(true);
             $table->timestamps();
         });

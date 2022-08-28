@@ -10,6 +10,7 @@ Route::group(['middleware' => ['cors', 'json.response']], function () {
     Route::apiResource('addresses', 'AddressController');
 
     // Access Control
+    Route::apiResource('users', 'StaffController');
     Route::apiResource('roles', 'RoleController');
     Route::apiResource('modules', 'ModuleController');
     Route::apiResource('categories', 'CategoryController');
@@ -18,6 +19,10 @@ Route::group(['middleware' => ['cors', 'json.response']], function () {
     Route::apiResource('tags', 'TagController');
     Route::apiResource('images', 'ImageController');
     Route::apiResource('products', 'ProductController');
+    Route::apiResource('carts', 'CartController');
+    Route::apiResource('cartItems', 'CartItemController');
+    Route::apiResource('orders', 'OrderController');
+    Route::apiResource('internalOrders', 'InternalOrderController');
     Route::get('permissions', 'PermissionController@index');
 });
 

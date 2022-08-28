@@ -13,10 +13,8 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('categoryables', function (Blueprint $table) {
-            $table->bigInteger('category_id')->unsigned();
-            $table->bigInteger('categoryable_id')->unsigned();
-            $table->string('categoryable_type');
+        Schema::table('internal_orders', function (Blueprint $table) {
+            $table->decimal('total_amount', $precision=30, $scale=2)->default(0)->after('trnxId');
         });
     }
 
@@ -27,6 +25,8 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('categoryables');
+        Schema::table('internal_orders', function (Blueprint $table) {
+            $table->dropColumn('total_amount');
+        });
     }
 };

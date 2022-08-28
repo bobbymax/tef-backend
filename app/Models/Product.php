@@ -31,9 +31,9 @@ class Product extends Model
         return $this->belongsTo(Brand::class, 'brand_id');
     }
 
-    public function images()
+    public function image()
     {
-        return $this->morphMany(Image::class, 'imageable');
+        return $this->morphOne(Image::class, 'imageable');
     }
 
     public function carts()
