@@ -17,6 +17,11 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('products/public', 'ProductController@display');
+Route::get('tags/public', 'PublicAccessController@tags');
+Route::get('classifications/public', 'PublicAccessController@classifications');
+Route::get('categories/public', 'PublicAccessController@categories');
+
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

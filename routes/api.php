@@ -24,6 +24,10 @@ Route::group(['middleware' => ['cors', 'json.response']], function () {
     Route::apiResource('orders', 'OrderController');
     Route::apiResource('internalOrders', 'InternalOrderController');
     Route::get('permissions', 'PermissionController@index');
+
+    // Public Resource Access
+//    Route::get('products/public', 'PublicAccessController@getProducts');
+    Route::get('products/public', 'ProductController@display');
 });
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {

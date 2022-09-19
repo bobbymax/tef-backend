@@ -16,8 +16,33 @@ class ProductController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth:api');
+        $this->middleware('auth:api')->except('display');
     }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function display()
+    {
+        $products = Product::latest()->get();
+
+        if ($products->count() < 1) {
+            return response()->json([
+                'data' => [],
+                'status' => 'warning',
+                'message' => 'No data found!!',
+            ], 200);
+        }
+
+        return response()->json([
+            'data' => ProductResource::collection($products),
+            'status' => 'success',
+            'message' => 'Tags List',
+        ], 200);
+    }
+
     /**
      * Display a listing of the resource.
      *

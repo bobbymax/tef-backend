@@ -18,6 +18,11 @@ return [
         'passwords' => 'users',
     ],
 
+//    'defaults' => [
+//        'guard' => 'api',
+//        'passwords' => 'users',
+//    ],
+
     /*
     |--------------------------------------------------------------------------
     | Authentication Guards
